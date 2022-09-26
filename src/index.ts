@@ -1,0 +1,44 @@
+import express, {Application} from "express"
+import indexRoutes from "./routes/indexRoutes";
+import userRoutes from "./routes/userRoutes";
+import morgan from "morgan";
+import cors from "cors";
+
+
+/**
+ * Iniciar Servidor
+ * autor.-acordova
+ */
+class Server {
+
+    public app : Application;
+
+    constructor(){
+        this.app = express();
+        this.config();
+        this.router();
+    }
+
+    config() : void {
+        this.app.set('port', process.env.PORT || 3000);
+        this.app.use(morgan('dev'));
+        this.app.use(cors());
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({extended : false}));
+        
+    }
+
+    router() : void {
+        this.app.use(indexRoutes);
+        this.app.use('/api/user',userRoutes);
+    }
+
+    start() : void {
+        this.app.listen(this.app.get('port'),() =>{
+            console.log("***Start SERVER***");
+        })
+    }
+}
+
+const server = new Server();
+server.start();
